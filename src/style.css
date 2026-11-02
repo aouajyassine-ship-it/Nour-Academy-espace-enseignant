@@ -28,35 +28,72 @@
     margin-top: 20px;
 }
 
-/* Carte de chaque élève */
+/* Carte élève */
 .eleve-card {
-    background-color: #ffffff;
-    border: 1px solid #e5e3dc;
+    background-color: #FFFFFF;
+    border: 1px solid #E5E3DC;
     border-radius: 22px;
-
-    padding: 22px 24px;
-    min-height: 75px;
+    padding: 18px 24px;
+    min-height: 85px;
 
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    gap: 15px;
 
-    color: #202b36;
-    font-size: 19px;
-    font-weight: 500;
-
+    color: #202B36;
     transition: border-color 0.2s ease;
 }
 
 .eleve-card:hover {
-    border-color: #b8d8c9;
+    border-color: #B8D8C9;
+}
+
+/* Informations élève */
+.eleve-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.eleve-nom {
+    font-size: 19px;
+    font-weight: 600;
+    color: #202B36;
+    margin: 0;
+}
+
+.eleve-absences {
+    font-size: 16px;
+    color: #7B8490;
+    margin: 0;
+}
+
+/* Moyenne */
+.eleve-moyenne {
+    font-family: "Newsreader", serif;
+    font-size: 27px;
+    color: #202B36;
+    white-space: nowrap;
 }
 
 /* Responsive */
 @media (max-width: 600px) {
     .eleve-card {
-        padding: 18px;
-        min-height: 65px;
-        font-size: 16px;
+        padding: 16px;
+        min-height: 75px;
         border-radius: 18px;
+    }
+
+    .eleve-nom {
+        font-size: 16px;
+    }
+
+    .eleve-absences {
+        font-size: 14px;
+    }
+
+    .eleve-moyenne {
+        font-size: 21px;
     }
 }
