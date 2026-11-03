@@ -1,7 +1,10 @@
 import { groupes , eleves } from "./data.js";
 
-const eleve = document.querySelector("#liste-eleves")
-const compteur = document.querySelector("#compteur")
+const listeEleves = document.querySelector("#liste-eleves");
+const compteur = document.querySelector("#compteur");
+const filtreGroupes = document.querySelector("#filtre-groupe");
+const rechercher = document.querySelector("#recherche");
+const aucunResultat = document.querySelector("#aucun-resultat");
 
 
 function creerLigne(eleve) {
@@ -51,9 +54,53 @@ let lignes = eleves.map(function(eleve) {
 });
 
 lignes.forEach(function(ligne) {
-    eleve.append(ligne);
+    listeEleves.append(ligne);
 });
 
 compteur.textContent = eleves.length + " eleves";
 
 
+groupes.forEach(function(groupe) {
+    let option = document.createElement("option");
+    option.textContent = groupe.nom;
+    option.value = groupe.id;
+    filtreGroupes.append(option);
+});
+
+function afficherEleves() {
+    let groupeChoisi = filtreGroupes.value;
+    let texteRecherche = rechercher.value.trim().toLowerCase();
+
+    let resultat = eleves.filter(function(eleve) {
+        let correspondAuGroupe = groupeChoisi === "" || Number(groupeChoisi) === eleve.groupeId;
+        let correspondALaRecherche =
+            eleve.prenom.toLowerCase().includes(texteRecherche) ||
+            eleve.nom.toLowerCase().includes(texteRecherche);
+
+        return correspondAuGroupe && correspondALaRecherche;
+    });
+
+    listeEleves.textContent = "";
+
+    resultat.forEach(function(eleve) {
+        listeEleves.append(creerLigne(eleve));
+    });
+
+    compteur.textContent = resultat.length + (resultat.length > 1 ? " élèves" : " élève");
+
+    if (resultat.length === 0) {
+        aucunResultat.hidden = false;
+    } else {
+        aucunResultat.hidden = true;
+    }
+}
+
+filtreGroupes.addEventListener("change", function() {
+    afficherEleves();
+});
+
+rechercher.addEventListener("input", function() {
+    afficherEleves();
+});
+
+afficherEleves();
