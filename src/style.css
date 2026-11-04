@@ -97,3 +97,16 @@
         font-size: 21px;
     }
 }
+.eleve-alerte {
+    border: 1px solid #dc4b35;
+    background-color: #fff0eb;
+}
+.btn-absent {
+    border: 1px solid #DC4B35;
+    border-radius: 999px;
+    padding: 6px 16px;
+    color: #DC4B35;
+    background-color: white;
+    font-size: 13px;
+    cursor: pointer;
+}

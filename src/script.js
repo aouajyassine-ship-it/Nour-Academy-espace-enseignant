@@ -1,29 +1,35 @@
-import { groupes , eleves } from "./data.js";
+import { groupes, eleves } from "./data.js";
 
 const listeEleves = document.querySelector("#liste-eleves");
 const compteur = document.querySelector("#compteur");
 const filtreGroupes = document.querySelector("#filtre-groupe");
 const rechercher = document.querySelector("#recherche");
 const aucunResultat = document.querySelector("#aucun-resultat");
-
+const tri = document.querySelector("#tri");
 
 function creerLigne(eleve) {
     let liste = document.createElement("li");
     liste.classList.add("eleve-card");
 
+    if (eleve.absences >= 3) {
+    liste.classList.add("eleve-alerte");
+}
     let somme = 0;
+
     for (let i = 0; i < eleve.notes.length; i++) {
         somme = somme + eleve.notes[i];
     }
+
     let moyenne = "—";
 
     if (eleve.notes.length > 0) {
         moyenne = (somme / eleve.notes.length).toFixed(2);
         moyenne = moyenne.replace(".", ",");
     }
+
     let info = document.createElement("div");
     info.classList.add("eleve-info");
-    
+
     let nom = document.createElement("p");
     nom.classList.add("eleve-nom");
     nom.textContent = eleve.prenom + " " + eleve.nom;
@@ -32,34 +38,32 @@ function creerLigne(eleve) {
     absences.classList.add("eleve-absences");
     absences.textContent = eleve.absences + " absence(s)";
 
-
     let note = document.createElement("span");
     note.classList.add("eleve-moyenne");
+
+    let absent = document.createElement("button");
+    absent.textContent = "Absent";
+    absent.classList.add("btn-absent");
 
     if (moyenne === "—") {
         note.textContent = "—";
     } else {
-        note.textContent = moyenne + " / 20";
+        note.textContent = moyenne + " / 20"
     }
+
+
+
     info.append(nom);
     info.append(absences);
     liste.append(info);
     liste.append(note);
+    liste.append(absent);
+
     return liste;
+
 }
 
-let lignes = eleves.map(function(eleve) {
- return creerLigne(eleve);
-
-});
-
-lignes.forEach(function(ligne) {
-    listeEleves.append(ligne);
-});
-
-compteur.textContent = eleves.length + " eleves";
-
-
+// Remplir le select des groupes
 groupes.forEach(function(groupe) {
     let option = document.createElement("option");
     option.textContent = groupe.nom;
@@ -67,26 +71,51 @@ groupes.forEach(function(groupe) {
     filtreGroupes.append(option);
 });
 
+
+function calculerMoyenne(eleve) {
+    let somme = 0;
+    for (let i = 0; i < eleve.notes.length; i++) {
+        somme = somme + eleve.notes[i];
+    }
+    if (eleve.notes.length === 0) {
+        return 0;
+    }
+    return somme / eleve.notes.length;
+}
+
+function trierParMoyenne(a, b) {
+    return calculerMoyenne(b) - calculerMoyenne(a);
+}
+
+// Trier par nom alphabétique
+function trierParNom(a, b) {
+    return a.nom.localeCompare(b.nom);
+}
+// Afficher les élèves
 function afficherEleves() {
     let groupeChoisi = filtreGroupes.value;
     let texteRecherche = rechercher.value.trim().toLowerCase();
-
     let resultat = eleves.filter(function(eleve) {
-        let correspondAuGroupe = groupeChoisi === "" || Number(groupeChoisi) === eleve.groupeId;
-        let correspondALaRecherche =
-            eleve.prenom.toLowerCase().includes(texteRecherche) ||
-            eleve.nom.toLowerCase().includes(texteRecherche);
-
+        let correspondAuGroupe =groupeChoisi === "" || Number(groupeChoisi) === eleve.groupeId;
+        let correspondALaRecherche = eleve.prenom.toLowerCase().includes(texteRecherche) || eleve.nom.toLowerCase().includes(texteRecherche);
         return correspondAuGroupe && correspondALaRecherche;
     });
+    // Créer une copie pour préserver l'ordre original
+    resultat = [...resultat];
 
+    if (tri.value === "nom") {
+        resultat.sort(trierParNom);
+    }
+    if (tri.value === "moyenne") {
+        resultat.sort(trierParMoyenne);
+    }
     listeEleves.textContent = "";
-
+    // Afficher les résultats
     resultat.forEach(function(eleve) {
         listeEleves.append(creerLigne(eleve));
     });
-
-    compteur.textContent = resultat.length + (resultat.length > 1 ? " élèves" : " élève");
+    // Mettre à jour le compteur
+    compteur.textContent = resultat.length + " élèves";
 
     if (resultat.length === 0) {
         aucunResultat.hidden = false;
@@ -103,4 +132,9 @@ rechercher.addEventListener("input", function() {
     afficherEleves();
 });
 
+tri.addEventListener("change", function() {
+    afficherEleves();
+});
+
 afficherEleves();
+
