@@ -110,3 +110,9 @@
     font-size: 13px;
     cursor: pointer;
 }
+.btn-note {
+    border: 1px solid #D97706;
+    border-radius: 8px;
+    padding: 8px 14px;
+    cursor: pointer;
+}

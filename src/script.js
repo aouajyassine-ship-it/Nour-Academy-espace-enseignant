@@ -1,4 +1,5 @@
-import { groupes, eleves } from "./data.js";
+import { groupes, eleves as elevesInitiales } from "./data.js";
+let eleves = JSON.parse(localStorage.getItem("eleves")) || elevesInitiales;
 
 const listeEleves = document.querySelector("#liste-eleves");
 const compteur = document.querySelector("#compteur");
@@ -10,6 +11,7 @@ const tri = document.querySelector("#tri");
 function creerLigne(eleve) {
     let liste = document.createElement("li");
     liste.classList.add("eleve-card");
+    liste.dataset.id = eleve.id;
 
     if (eleve.absences >= 3) {
     liste.classList.add("eleve-alerte");
@@ -45,6 +47,10 @@ function creerLigne(eleve) {
     absent.textContent = "Absent";
     absent.classList.add("btn-absent");
 
+    let ajouterNote = document.createElement("button");
+    ajouterNote.textContent = "Ajouter la note";
+    ajouterNote.classList.add("btn-note");
+
     if (moyenne === "—") {
         note.textContent = "—";
     } else {
@@ -58,6 +64,7 @@ function creerLigne(eleve) {
     liste.append(info);
     liste.append(note);
     liste.append(absent);
+    liste.append(ajouterNote);
 
     return liste;
 
@@ -138,3 +145,16 @@ tri.addEventListener("change", function() {
 
 afficherEleves();
 
+listeEleves.addEventListener("click", function(event) {
+    let bouton = event.target.closest(".btn-absent");
+    if (bouton) {
+        let ligne = bouton.closest(".eleve-card");
+        let id = Number(ligne.dataset.id);
+        let eleve = eleves.find(function(eleve) {
+            return eleve.id === id;
+        });
+        eleve.absences++;
+        localStorage.setItem("eleves", JSON.stringify(eleves));
+        ligne.replaceWith(creerLigne(eleve));
+    }
+});
