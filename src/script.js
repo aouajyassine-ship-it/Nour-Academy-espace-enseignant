@@ -15,13 +15,15 @@ function creerLigne(eleve) {
 
     if (eleve.absences >= 3) {
     liste.classList.add("eleve-alerte");
+    let badge = document.createElement("span");
+    badge.textContent = "Prévenir les parents";
+    badge.classList.add("badge-alerte");
+    liste.append(badge);
 }
     let somme = 0;
-
     for (let i = 0; i < eleve.notes.length; i++) {
         somme = somme + eleve.notes[i];
     }
-
     let moyenne = "—";
 
     if (eleve.notes.length > 0) {
@@ -50,6 +52,12 @@ function creerLigne(eleve) {
     let ajouterNote = document.createElement("button");
     ajouterNote.textContent = "Ajouter la note";
     ajouterNote.classList.add("btn-note");
+    let inputNote = document.createElement("input");
+    inputNote.type = "number";
+    inputNote.min = 0;
+    inputNote.max = 20;
+    inputNote.placeholder = "Note /20";
+    inputNote.classList.add("input-note");
 
     if (moyenne === "—") {
         note.textContent = "—";
@@ -65,6 +73,7 @@ function creerLigne(eleve) {
     liste.append(note);
     liste.append(absent);
     liste.append(ajouterNote);
+    liste.append(inputNote);
 
     return liste;
 
@@ -146,15 +155,24 @@ tri.addEventListener("change", function() {
 afficherEleves();
 
 listeEleves.addEventListener("click", function(event) {
-    let bouton = event.target.closest(".btn-absent");
-    if (bouton) {
-        let ligne = bouton.closest(".eleve-card");
-        let id = Number(ligne.dataset.id);
-        let eleve = eleves.find(function(eleve) {
-            return eleve.id === id;
-        });
+    let ligne = event.target.closest(".eleve-card");
+    let id = Number(ligne.dataset.id);
+    let eleve = eleves.find(function(eleve) {
+        return eleve.id === id;
+    });
+    if (event.target.classList.contains("btn-absent")) {
         eleve.absences++;
-        localStorage.setItem("eleves", JSON.stringify(eleves));
-        ligne.replaceWith(creerLigne(eleve));
     }
+    if (event.target.classList.contains("btn-note")) {
+        let input = ligne.querySelector(".input-note");
+        let valeur = input.value;
+        let nouvelleNote = Number(valeur);
+        if (valeur !== "" && nouvelleNote >= 0 && nouvelleNote <= 20) {
+            eleve.notes.push(nouvelleNote);
+        } else {
+            alert("Entrez une note entre 0 et 20");
+        }
+    }
+    localStorage.setItem("eleves", JSON.stringify(eleves));
+    ligne.replaceWith(creerLigne(eleve));
 });
