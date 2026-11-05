@@ -72,8 +72,8 @@ function creerLigne(eleve) {
     liste.append(info);
     liste.append(note);
     liste.append(absent);
-    liste.append(ajouterNote);
-    liste.append(inputNote);
+   liste.append(inputNote);
+   liste.append(ajouterNote);
 
     return liste;
 
@@ -155,22 +155,31 @@ tri.addEventListener("change", function() {
 afficherEleves();
 
 listeEleves.addEventListener("click", function(event) {
-    let ligne = event.target.closest(".eleve-card");
+    let bouton = event.target.closest("button");
+    if (bouton === null) {
+        return;
+    }
+    let ligne = bouton.closest(".eleve-card");
     let id = Number(ligne.dataset.id);
     let eleve = eleves.find(function(eleve) {
         return eleve.id === id;
     });
-    if (event.target.classList.contains("btn-absent")) {
+    if (bouton.classList.contains("btn-absent")) {
         eleve.absences++;
     }
-    if (event.target.classList.contains("btn-note")) {
+    if (bouton.classList.contains("btn-note")) {
         let input = ligne.querySelector(".input-note");
         let valeur = input.value;
         let nouvelleNote = Number(valeur);
-        if (valeur !== "" && nouvelleNote >= 0 && nouvelleNote <= 20) {
+        if (valeur === "") {
+            alert("Entrez une note");
+            return;
+        }
+        if (nouvelleNote >= 0 && nouvelleNote <= 20) {
             eleve.notes.push(nouvelleNote);
         } else {
-            alert("Entrez une note entre 0 et 20");
+            alert("La note doit être entre 0 et 20");
+            return;
         }
     }
     localStorage.setItem("eleves", JSON.stringify(eleves));

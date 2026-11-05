@@ -125,3 +125,14 @@
     border-radius: 999px;
     margin-top: 4px;
 }
+.input-note {
+    width: 80px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: white;
+    color: #202B36;
+    cursor: text;
+    pointer-events: auto;
+    user-select: text;
+}
